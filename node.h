@@ -23,12 +23,8 @@ class Node
 
     protected:
         double value;
-
-    private:
         int degree;
         std::vector<Node *> references;
-
-        void Swap( Node& other );
 
 };
 
