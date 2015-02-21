@@ -60,5 +60,5 @@ void Graph::OutputHard( int *guess )
 {
     int i;
     for ( i = 0; i < numVariables; i++ )
-        guess[i] = variables[i]->GetHardValue(); 
+        guess[i] = variables[i].GetHardValue(); 
 }

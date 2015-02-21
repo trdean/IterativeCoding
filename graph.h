@@ -17,9 +17,9 @@ class Graph
         void OutputHard( int *guess );
 
     private:
-        vector<VariableNode>   variables;
-        vector<CheckNode>      checks;
+        std::vector<VariableNode>   variables;
+        std::vector<CheckNode>      checks;
 
         int numVariables;
         int numChecks;
-}
+};
