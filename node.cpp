@@ -44,7 +44,7 @@ void Node::PopReference()
 
 void Node::InsertReference( Node *ref, int index )
 {
-    references.emplace( references.begin() + index, ref );
+    references.insert( references.begin() + index, ref );
     degree++;
 }
 
