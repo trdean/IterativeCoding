@@ -21,5 +21,6 @@ class CodeTest {
     private:
         double RandomGaussian( double std_dev );
         double CalculateBER( Graph *TestGraph ); 
+        double CalculateUncoded( double *values, int len );
         //extern FILE *stdout;
 };

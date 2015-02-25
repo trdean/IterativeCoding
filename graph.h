@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include "node.h"
 
@@ -15,6 +17,8 @@ class Graph
         void SetVariablesFromLL( double *ll );
         bool Decode( int maxIterations );
         void OutputHard( int *guess );
+        int GetCheckLength();
+        int GetVariableLength();
 
     private:
         std::vector<VariableNode>   variables;

@@ -64,7 +64,8 @@ bool VariableNode::Update()
     sum = initialValue;
 
     for ( i = 0; i < degree; i++ ) {
-        sum += fabs ( references[i]->value );
+        //sum += fabs ( references[i]->value );
+        sum += references[i]->value;
     }
 
     if (sum > MAX_LL)
@@ -137,6 +138,9 @@ bool CheckNode::Update()
         tmpVal = references[i]->value;
         if ( tmpVal != 0 )
             product *= tanh( tmpVal / 2 );
+        //    product *= tanh( fabs(tmpVal) / 2 );
+        //if ( tmpVal < 0 )
+        //    product *= -1;
     }
 
     this->value = 2*atanh(product);

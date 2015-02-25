@@ -62,3 +62,13 @@ void Graph::OutputHard( int *guess )
     for ( i = 0; i < numVariables; i++ )
         guess[i] = variables[i].GetHardValue(); 
 }
+
+int Graph::GetCheckLength()
+{
+    return numChecks;
+}
+
+int Graph::GetVariableLength()
+{
+    return numVariables;
+}

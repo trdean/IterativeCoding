@@ -18,15 +18,18 @@ void CodeTest::TestCode( Graph *TestGraph,
                     int sample_size = 1000,
                     FILE *output = stdout )
 {
-    double sigma, BER;
+    double sigma, BER, Uncoded_BER;
     int i,j;
 
-    fprintf( output, "Sigma, BER\n" );
+    fprintf( output, "Sigma,    BER,      Uncoded BER\n" );
 
     double *values = (double *) malloc( TestGraph->GetVariableLength() * 
                                         sizeof(double) );
 
     for ( sigma = sigma_start; sigma <= sigma_stop; sigma += step ) {
+        fprintf( output, "%f, ", sigma );
+        BER = 0.0;
+        Uncoded_BER = 0.0;
         for ( i = 0; i < sample_size; i++ ) {
             //Generate random samples; simulate sending all zeros
             for ( j = 0; j < TestGraph->GetVariableLength(); j++ ) {
@@ -38,11 +41,15 @@ void CodeTest::TestCode( Graph *TestGraph,
 
             TestGraph->Decode( max_iterations );
 
-            BER = CalculateBER( TestGraph );
+            BER += CalculateBER( TestGraph );
+            Uncoded_BER += CalculateUncoded( values, 
+                                             TestGraph->GetVariableLength() );
 
             //Output
-            fprintf( output, "%f, %f\n", sigma, BER );
         }
+        BER = BER / (double) sample_size; 
+        Uncoded_BER = Uncoded_BER / (double) sample_size;
+        fprintf( output, "%f, %f\n", BER, Uncoded_BER );
     }
 
     free( values );
@@ -93,4 +100,18 @@ double CodeTest::CalculateBER( Graph *TestGraph )
     free( guess );
 
     return (double) number_incorrect / (double) number_variables;
+}
+
+double CodeTest::CalculateUncoded( double *values, int len )
+{
+    int i, number_incorrect;
+
+    number_incorrect = 0;
+
+    for ( i = 0; i < len; i++ ) {
+        if ( values[i] > 0 )
+            number_incorrect++;
+    }
+
+    return (double) number_incorrect / (double) len;
 }
