@@ -64,8 +64,8 @@ bool VariableNode::Update()
     sum = initialValue;
 
     for ( i = 0; i < degree; i++ ) {
-        //sum += fabs ( references[i]->value );
-        sum += references[i]->value;
+        sum += fabs ( references[i]->value );
+        //sum += references[i]->value;
     }
 
     if (sum > MAX_LL)
@@ -92,7 +92,7 @@ void VariableNode::SetValueFromLL( double ll )
 
 int VariableNode::GetHardValue()
 {
-    if ( value >= 0 )
+    if ( value < 0 )
         return 1;
     else    
         return 0;
@@ -108,21 +108,21 @@ double VariableNode::GetSigma()
     return sigma;
 }
 
+
 double VariableNode::calc_ll( double val, double sigma )
 {
-    if ( val == 0 )
-        return 0;
-
-    return log( q_func( val, 1, sigma ) / q_func( val, -1, sigma ) );
+    return -2 * val / (sigma * sigma);
 }
 
+/*
 double VariableNode::q_func( double x, double y, double sigma )
 {
     double norm, expon;
-    norm = 1 / sqrt(2 * M_PI) * sigma;
-    expon = ( -1 * (y - x) * (y -x ) / (2*sigma*sigma) );
+    norm = 1 / ( sqrt(2 * M_PI) * sigma );
+    expon = ( -1 * (y - x) * (y - x) / (2*sigma*sigma) );
     return (double) norm * exp( expon );
 }
+*/
 
 bool CheckNode::Update() 
 {

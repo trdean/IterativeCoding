@@ -40,7 +40,7 @@ class VariableNode : public Node
 
     private:
         double calc_ll( double val, double sigma );
-        double q_func( double x, double y, double sigma );
+        //double q_func( double x, double y, double sigma );
         double sigma;
 };
 
