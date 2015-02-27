@@ -68,6 +68,9 @@ Graph::Graph( const Graph& other )
     numChecks = other.GetCheckLength();
     AllocatedNodes = true;
 
+    variables.resize( numVariables );
+    checks.resize( numChecks );
+
     for ( i = 0; i < numChecks; i++ ) {
         checks[i] = new CheckNode();
         for ( j = 0; j < numVariables; j++ ) {
