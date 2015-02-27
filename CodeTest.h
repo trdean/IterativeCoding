@@ -18,6 +18,10 @@ class CodeTest {
                        int sample_size, 
                        FILE *output );
 
+        void TestDebug( Graph *TestGraph,
+                        double sigma,
+                        int iterations );
+
     private:
         double RandomGaussian( double std_dev );
         double CalculateBER( Graph *TestGraph ); 

@@ -55,6 +55,34 @@ void CodeTest::TestCode( Graph *TestGraph,
     free( values );
 }
 
+void CodeTest::TestDebug( Graph *TestGraph,
+                          double sigma,
+                          int iterations )
+{
+    int i;
+    int vars = TestGraph->GetVariableLength();
+
+    double *values = (double *) malloc( vars * sizeof(double) );
+
+    printf("Values\n");
+
+    for ( i = 0; i < vars; i++ ) {
+        values[i] = RandomGaussian( sigma ) - 1;
+        printf("%f\n", values[i]);
+    }
+
+    TestGraph->SetVariablesFromReal( values, sigma );
+    TestGraph->Debug();
+
+    for ( i = 0; i < iterations; i++ ) {
+
+
+        TestGraph->DecodeRound();
+        TestGraph->Debug();
+    }
+
+    free( values );                                                 
+}
 
 //Polar method of generating Gaussian variables, given by Knuth
 double CodeTest::RandomGaussian( double std_dev )
