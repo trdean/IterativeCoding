@@ -24,8 +24,8 @@ int main()
     var2->SetSigma( 1.0 );
     var3->SetSigma( 1.0 );
 
-    var1->SetValueFromReal( -1.0 );
-    var2->SetValueFromReal( -1.2 );
+    var1->SetValueFromReal( 1.0 );
+    var2->SetValueFromReal( 1.2 );
     var3->SetValueFromReal( 0.1 );
 
     printf( "Value 1: %f\n", var1->value );
@@ -41,13 +41,20 @@ int main()
         printf( "-------------------------\n\n" );
         check->Update();
 
-        printf( "Check value: %f\n\n", check->value );
+        printf( "Check values: {%f, %f, %f}\n\n", 
+                check->GetMessage( var1 ), 
+                check->GetMessage( var2 ), 
+                check->GetMessage( var3 ));
 
         var1->Update();
         var2->Update();
         var3->Update();
 
         printf( "After updating variables:\n" );
+
+        printf( "Message 1: %f\n", var1->GetMessage( check ) );
+        printf( "Message 2: %f\n", var2->GetMessage( check ) );
+        printf( "Message 3: %f\n", var3->GetMessage( check ) );
 
         printf( "Value 1: %f\n", var1->value );
         printf( "Value 2: %f\n", var2->value );
