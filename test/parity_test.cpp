@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "graph.h"
+#include "../graph.h"
 
 int main()
 {
