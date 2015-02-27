@@ -16,9 +16,12 @@ class Graph
         void SetVariablesFromReal( double *values, double sigma );
         void SetVariablesFromLL( double *ll );
         bool Decode( int maxIterations );
+        bool DecodeRound();
         void OutputHard( int *guess );
         int GetCheckLength();
         int GetVariableLength();
+
+        void Debug();
 
     private:
         std::vector<VariableNode>   variables;

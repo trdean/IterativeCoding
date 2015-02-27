@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "graph.h"
 
 Graph::Graph ( int dNumVariables, int dNumChecks, int **checkMatrix ) :
@@ -39,21 +40,32 @@ void Graph::SetVariablesFromLL( double *ll )
 
 bool Graph::Decode( int maxIterations = MAX_ITER_DEFAULT )
 {
-    int i, j;
-    bool updated;
+    int i;
+    bool success;
 
+    success = false;
     for( i = 0; i < maxIterations; i++ ) {
-        updated = false;
-        for ( j = 0; j < numChecks; j++ )
-            updated |= checks[j].Update();
-        for ( j = 0; j < numVariables; j++ )
-            updated |= variables[j].Update();
-
-        if (!updated)
+        if (!DecodeRound()) {
+            success = true;
             break;
+        }
     }
 
-    return !updated;
+    return success;
+}
+
+bool Graph::DecodeRound()
+{
+    int i;
+    bool updated;
+
+    updated = false;
+    for ( i = 0; i < numChecks; i++ )
+        updated |= checks[i].Update();
+    for ( i = 0; i < numVariables; i++ )
+        updated |= variables[i].Update();
+
+    return updated; 
 }
 
 void Graph::OutputHard( int *guess )
@@ -71,4 +83,21 @@ int Graph::GetCheckLength()
 int Graph::GetVariableLength()
 {
     return numVariables;
+}
+
+void Graph::Debug()
+{
+    int i;
+
+    printf("-------------------------------------------\n");
+    printf("Graph debug info\n");
+    printf("----------------\n\n");
+
+    for ( i = 0; i < numVariables; i++ )
+        variables[i].Debug();
+
+    for ( i = 0; i < numChecks; i++ )
+        checks[i].Debug();
+
+    printf("\n");
 }
