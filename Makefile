@@ -25,5 +25,8 @@ graph.o: graph.cpp graph.h
 CodeTest.o: CodeTest.cpp CodeTest.h
 	$(CC) $(CFLAGS) -c CodeTest.cpp $(LIBS)
 
+doc:
+	doxygen doxygen.cfg
+
 clean:
 	rm *.o test/parity_test test/hamming_test test/bp_debug test/copy_test test/*.o
