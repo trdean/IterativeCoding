@@ -7,7 +7,7 @@ class Node
 {
     public:
         Node();
-        //~Node();
+        virtual ~Node();
         Node( const Node& other );
         Node& operator=( const Node& rhs ); 
 

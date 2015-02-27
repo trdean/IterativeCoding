@@ -13,6 +13,11 @@ Node::Node() :
 
 }
 
+Node::~Node() 
+{ 
+
+}
+
 Node::Node( const Node& other )
 {
     int i;
