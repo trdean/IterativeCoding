@@ -91,6 +91,9 @@ Graph& Graph::operator=( const Graph& rhs )
     numChecks = rhs.GetCheckLength();
     AllocatedNodes = true;
 
+    checks.resize( numChecks );
+    variables.resize( numVariables );
+
     for ( i = 0; i < numChecks; i++ ) {
         checks[i] = new CheckNode();
         for ( j = 0; j < numVariables; j++ ) {
