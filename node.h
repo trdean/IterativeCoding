@@ -3,6 +3,12 @@
 #define MAX_LL 100000
 #define MIN_LL -100000
 
+//! Abstract base class for nodes
+/*!
+  This class is inherited by CheckNode and VariableNode and contains the common
+  functionality, mainly manipulating references and retreiving messages
+ */
+
 class Node
 {
     public:
