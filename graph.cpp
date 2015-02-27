@@ -41,31 +41,24 @@ void Graph::SetVariablesFromLL( double *ll )
 bool Graph::Decode( int maxIterations = MAX_ITER_DEFAULT )
 {
     int i;
-    bool success;
 
-    success = false;
     for( i = 0; i < maxIterations; i++ ) {
-        if (!DecodeRound()) {
-            success = true;
-            break;
-        }
+        DecodeRound();
+        if( CheckSyndrome() ) 
+            return true;
     }
 
-    return success;
+    return false;
 }
 
-bool Graph::DecodeRound()
+void Graph::DecodeRound()
 {
     int i;
-    bool updated;
 
-    updated = false;
     for ( i = 0; i < numChecks; i++ )
-        updated |= checks[i].Update();
+        checks[i].Update();
     for ( i = 0; i < numVariables; i++ )
-        updated |= variables[i].Update();
-
-    return updated; 
+        variables[i].Update();
 }
 
 void Graph::OutputHard( int *guess )
@@ -83,6 +76,17 @@ int Graph::GetCheckLength()
 int Graph::GetVariableLength()
 {
     return numVariables;
+}
+
+bool Graph::CheckSyndrome()
+{
+    int i;
+
+    for ( i = 0; i < numChecks; i++ )
+        if (!checks[i].Syndrome())
+            return false;
+    
+    return true;
 }
 
 void Graph::Debug()

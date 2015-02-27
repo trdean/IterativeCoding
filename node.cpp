@@ -82,24 +82,21 @@ VariableNode::VariableNode() :
     varCount++;
 }
 
-bool VariableNode::Update()
+void VariableNode::Update()
 {
     int i;
-    bool updated = false;
 
     //Update messages to check nodes
     for ( i = 0; i < degree; i++ )
-        updated |= Update( i );
+        Update( i );
 
     //Update my believed value
     for ( i = 0; i < degree; i++ )
         //value += references[i]->messages[index];
         value += references[i]->GetMessage( this );
-
-    return updated;
 }
 
-bool VariableNode::Update( int i )
+void VariableNode::Update( int i )
 {
     double initialValue;
     double sum;
@@ -122,10 +119,6 @@ bool VariableNode::Update( int i )
 
 
     messages[i] = sum;
-    if( sum == initialValue)
-        return false;
-    else
-        return true;
 }
 
 void VariableNode::SetValueFromReal( double real_value )
@@ -205,25 +198,20 @@ CheckNode::CheckNode() :
     checkCount++;
 }
 
-bool CheckNode::Update()
+void CheckNode::Update()
 {
     int i;
-    bool updated = false;
 
     for ( i = 0; i < degree; i++ )
-        updated |= Update( i );
-
-    return updated;
+        Update( i );
 }
 
-bool CheckNode::Update( int i ) 
+void CheckNode::Update( int i ) 
 {
-    double initialValue;
     double tmpVal;
     double product;
     int j;
 
-    initialValue = messages[i];
     product = 1;
 
     for ( j = 0; j < degree; j++ ) {
@@ -241,11 +229,21 @@ bool CheckNode::Update( int i )
         messages[i] = MAX_LL;
     if ( messages[i] < MIN_LL )
         messages[i] = MIN_LL;
+}
 
-    if ( messages[i] == initialValue )
+bool CheckNode::Syndrome()
+{
+    int i;
+    double product = 1.0;
+
+    for ( i = 0; i < degree; i++ ) {
+        product *= references[i]->value;
+    }
+
+    if (product <= 0)
         return false;
-
-    return true;
+    else
+        return true;
 }
 
 void CheckNode::Debug()

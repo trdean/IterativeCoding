@@ -16,10 +16,11 @@ class Graph
         void SetVariablesFromReal( double *values, double sigma );
         void SetVariablesFromLL( double *ll );
         bool Decode( int maxIterations );
-        bool DecodeRound();
+        void DecodeRound();
         void OutputHard( int *guess );
         int GetCheckLength();
         int GetVariableLength();
+        bool CheckSyndrome();
 
         void Debug();
 

@@ -11,7 +11,7 @@ class Node
         Node( const Node& other );
         Node& operator=( const Node& rhs ); 
 
-        virtual bool Update() = 0;
+        virtual void Update() = 0;
         virtual void Debug() = 0;
         
         void PushReference( Node *ref );
@@ -23,11 +23,11 @@ class Node
 
         double value;
 
-        std::vector<double> messages;
     protected:
         int index;
         int degree;
         std::vector<Node *> references;
+        std::vector<double> messages;
 
 };
 
@@ -37,8 +37,8 @@ class VariableNode : public Node
 
     public:
         VariableNode();
-        bool Update();
-        bool Update( int i );
+        void Update();
+        void Update( int i );
         void SetValueFromReal( double real_value );
         void SetValueFromLL( double ll );
         int GetHardValue();
@@ -60,9 +60,9 @@ class CheckNode : public Node
 
     public:
         CheckNode();
-        bool Update();
-        bool Update( int i );
-
+        void Update();
+        void Update( int i );
+        bool Syndrome();
         void Debug();
 
     private:
