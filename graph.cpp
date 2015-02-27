@@ -31,10 +31,57 @@ Graph::~Graph()
     if (AllocatedNodes) {
         for ( i = 0; i < numVariables; i++ ) 
             delete variables[i];
-
-        for ( i = 0; i < numChecks; i++ )
-            delete checks[i];
     }
+
+    for ( i = 0; i < numChecks; i++ )
+       delete checks[i]; 
+}
+
+Graph::Graph( const Graph& other )
+{
+    int i, j;
+
+    numVariables = other.GetVariableLength();
+    numChecks = other.GetCheckLength();
+    AllocatedNodes = true;
+
+    for ( i = 0; i < numChecks; i++ ) {
+        checks[i] = new CheckNode();
+        for ( j = 0; j < numVariables; j++ ) {
+            variables[j] = new VariableNode();
+            if ( other.CheckConnection( i, j ) ) {
+                checks[i]->PushReference( variables[j] );
+                variables[j]->PushReference( checks[i] );
+            }
+        }
+    }
+}
+
+Graph& Graph::operator=( const Graph& rhs )
+{
+    int i, j;
+
+    numVariables = rhs.GetVariableLength();
+    numChecks = rhs.GetCheckLength();
+    AllocatedNodes = true;
+
+    for ( i = 0; i < numChecks; i++ ) {
+        checks[i] = new CheckNode();
+        for ( j = 0; j < numVariables; j++ ) {
+            variables[j] = new VariableNode();
+            if ( rhs.CheckConnection( i, j ) ) {
+                checks[i]->PushReference( variables[j] );
+                variables[j]->PushReference( checks[i] );
+            }
+        }
+    }
+
+    return *this;
+}
+
+bool Graph::CheckConnection( int checkIndex, int variableIndex ) const
+{
+    return variables[variableIndex]->IsReference( checks[checkIndex]->GetIndex() );
 }
 
 void Graph::SetVariablesFromReal( double *values, double sigma )
@@ -85,12 +132,12 @@ void Graph::OutputHard( int *guess )
         guess[i] = variables[i]->GetHardValue(); 
 }
 
-int Graph::GetCheckLength()
+int Graph::GetCheckLength() const
 {
     return numChecks;
 }
 
-int Graph::GetVariableLength()
+int Graph::GetVariableLength() const
 {
     return numVariables;
 }
