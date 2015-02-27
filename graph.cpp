@@ -24,6 +24,29 @@ Graph::Graph ( int dNumVariables, int dNumChecks, int **checkMatrix ) :
     }      
 }
 
+Graph::Graph( std::vector<VariableNode *> *variableNodes, int dNumChecks, int **checkMatrix ) :
+    numVariables ( variableNodes->size() ),
+    numChecks ( dNumChecks )
+{
+    int i, j;
+
+    AllocatedNodes = false;
+
+    variables.resize( numVariables );
+    checks.resize( numChecks );
+
+    for ( i = 0; i < numChecks; i++ ) {
+        checks[i] = new CheckNode();
+        for ( j = 0; j < numVariables; j++ ) {
+            variables[j] = (*variableNodes)[i];
+            if ( checkMatrix[i][j] == 1 ) {
+                checks[i]->PushReference( variables[j] );
+                variables[j]->PushReference( checks[i] );
+            }
+        }
+    }   
+}
+
 Graph::~Graph() 
 {
     int i;

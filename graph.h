@@ -9,6 +9,7 @@ class Graph
 {
     public:
         Graph( int dNumVariables, int dNumChecks, int **checkMatrix );
+        Graph( std::vector<VariableNode *> *variableNodes, int dNumChecks, int **checkMatrix );
         ~Graph();
         Graph( const Graph& other );
         Graph& operator=( const Graph& rhs );
