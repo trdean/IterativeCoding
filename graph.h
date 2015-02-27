@@ -9,7 +9,7 @@ class Graph
 {
     public:
         Graph( int dNumVariables, int dNumChecks, int **checkMatrix );
-        //~Graph();
+        ~Graph();
         //Graph( const Graph& other );
         //Graph& operator=( const Graph& rhs );
 
@@ -25,9 +25,10 @@ class Graph
         void Debug();
 
     private:
-        std::vector<VariableNode>   variables;
-        std::vector<CheckNode>      checks;
+        std::vector<VariableNode *>   variables;
+        std::vector<CheckNode *>      checks;
 
         int numVariables;
         int numChecks;
+        bool AllocatedNodes;
 };
