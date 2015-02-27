@@ -18,12 +18,16 @@ class Node
         void PopReference();
         void InsertReference( Node *ref, int index );
         void RemoveReference( int index );
-        double GetMessage( Node *ref );
-        int GetDegree();
+        bool IsReference( int otherIndex );
+
+        double GetMessage( Node *ref ) const;
+        int GetDegree() const;
+        int GetIndex() const;
 
         double value;
 
     protected:
+
         int index;
         int degree;
         std::vector<Node *> references;

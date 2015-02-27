@@ -67,7 +67,18 @@ void Node::RemoveReference( int index )
     degree--;
 }
 
-double Node::GetMessage( Node *ref )
+bool Node::IsReference( int otherIndex )
+{
+    unsigned i;
+  
+    for ( i = 0; i < references.size(); i++ )
+        if ( references[i]->GetIndex() == otherIndex )
+            return true;
+
+    return false;
+}
+
+double Node::GetMessage( Node *ref ) const
 {
     unsigned i;
 
@@ -78,6 +89,16 @@ double Node::GetMessage( Node *ref )
 
     //Shouldn't be here...maybe raise assertion
     return 0.0;
+}
+
+int Node::GetDegree() const
+{
+    return degree;
+}
+
+int Node::GetIndex() const
+{
+    return index;
 }
 
 VariableNode::VariableNode() :
