@@ -12,16 +12,19 @@ Graph::Graph ( int dNumVariables, int dNumChecks, int **checkMatrix ) :
     variables.resize( numVariables );
     checks.resize( numChecks );
 
-    for ( i = 0; i < numChecks; i++ ) {
+    for ( i = 0; i < numChecks; i++ )
         checks[i] = new CheckNode();
+    for ( i = 0; i < numVariables; i++ )
+        variables[i] = new VariableNode();
+
+    for ( i = 0; i < numChecks; i++ ) {
         for ( j = 0; j < numVariables; j++ ) {
-            variables[j] = new VariableNode();
             if ( checkMatrix[i][j] == 1 ) {
                 checks[i]->PushReference( variables[j] );
                 variables[j]->PushReference( checks[i] );
             }
         }
-    }      
+    }
 }
 
 Graph::Graph( std::vector<VariableNode *> *variableNodes, int dNumChecks, int **checkMatrix ) :
@@ -35,10 +38,13 @@ Graph::Graph( std::vector<VariableNode *> *variableNodes, int dNumChecks, int **
     variables.resize( numVariables );
     checks.resize( numChecks );
 
-    for ( i = 0; i < numChecks; i++ ) {
+    for ( i = 0; i < numChecks; i++ )
         checks[i] = new CheckNode();
+    for ( i = 0; i < numVariables; i++ )
+        variables[i] = new VariableNode();
+
+    for ( i = 0; i < numChecks; i++ ) {
         for ( j = 0; j < numVariables; j++ ) {
-            variables[j] = (*variableNodes)[i];
             if ( checkMatrix[i][j] == 1 ) {
                 checks[i]->PushReference( variables[j] );
                 variables[j]->PushReference( checks[i] );
@@ -71,10 +77,13 @@ Graph::Graph( const Graph& other )
     variables.resize( numVariables );
     checks.resize( numChecks );
 
-    for ( i = 0; i < numChecks; i++ ) {
+    for ( i = 0; i < numChecks; i++ )
         checks[i] = new CheckNode();
+    for ( i = 0; i < numVariables; i++ )
+        variables[i] = new VariableNode();
+
+    for ( i = 0; i < numChecks; i++ ) {
         for ( j = 0; j < numVariables; j++ ) {
-            variables[j] = new VariableNode();
             if ( other.CheckConnection( i, j ) ) {
                 checks[i]->PushReference( variables[j] );
                 variables[j]->PushReference( checks[i] );
@@ -197,4 +206,24 @@ void Graph::Debug()
         checks[i]->Debug();
 
     printf("\n");
+}
+
+void Graph::ViewGraph()
+{
+    int i, j;
+
+    printf("Graph connections\n\n");
+
+    for ( i = 0; i < numVariables; i++ ) {
+        printf("Variable Node %d:\n", variables[i]->GetIndex() );
+        for ( j = 0; j < variables[i]->GetDegree(); j++ ) 
+            printf("    Check Node %d\n", variables[i]->GetReference( j )->GetIndex() );
+    }
+
+    for ( i = 0; i < numChecks; i++ ) {
+        printf("Check Node %d:\n", checks[i]->GetIndex() );
+        for ( j = 0; j < checks[i]->GetDegree(); j++ )
+            printf("    Variable Node %d\n", checks[i]->GetReference( j )->GetIndex() );
+    }
+ 
 }

@@ -26,6 +26,7 @@ class Graph
         bool CheckSyndrome();
 
         void Debug();
+        void ViewGraph();
 
     private:
         std::vector<VariableNode *>   variables;
