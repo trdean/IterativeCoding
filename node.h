@@ -29,6 +29,7 @@ class Node
         double GetMessage( Node *ref ) const;
         int GetDegree() const;
         int GetIndex() const;
+        Node *GetReference( int index );
 
         double value;
 

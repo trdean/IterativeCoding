@@ -101,6 +101,11 @@ int Node::GetIndex() const
     return index;
 }
 
+Node *Node::GetReference( int index )
+{
+    return references[index];
+}
+
 VariableNode::VariableNode() :
     Node()
 {
