@@ -41,7 +41,7 @@ Graph::Graph( std::vector<VariableNode *> *variableNodes, int dNumChecks, int **
     for ( i = 0; i < numChecks; i++ )
         checks[i] = new CheckNode();
     for ( i = 0; i < numVariables; i++ )
-        variables[i] = new VariableNode();
+        variables[i] = (*variableNodes)[i];
 
     for ( i = 0; i < numChecks; i++ ) {
         for ( j = 0; j < numVariables; j++ ) {
@@ -103,10 +103,13 @@ Graph& Graph::operator=( const Graph& rhs )
     checks.resize( numChecks );
     variables.resize( numVariables );
 
-    for ( i = 0; i < numChecks; i++ ) {
+    for ( i = 0; i < numChecks; i++ )
         checks[i] = new CheckNode();
+    for ( i = 0; i < numVariables; i++ )
+        variables[i] = new VariableNode();
+
+    for ( i = 0; i < numChecks; i++ ) {
         for ( j = 0; j < numVariables; j++ ) {
-            variables[j] = new VariableNode();
             if ( rhs.CheckConnection( i, j ) ) {
                 checks[i]->PushReference( variables[j] );
                 variables[j]->PushReference( checks[i] );
