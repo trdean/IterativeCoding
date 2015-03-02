@@ -2,12 +2,13 @@
 
 #include "../CodeTest.h"
 #include "../graph.h"
+#include "../product.h"
 
 int main() 
 {
     int hammingCheck[][7] = { { 1, 1, 1, 0, 1, 0, 0},
-       			      { 1, 1, 0, 1, 0, 1, 0},
-			      { 1, 0, 1, 1, 0, 0, 1} };
+             			      { 1, 1, 0, 1, 0, 1, 0},
+	            		      { 1, 0, 1, 1, 0, 0, 1} };
 
     int **mCheck = (int **) malloc(3*sizeof(int *));
     int i,j;
@@ -19,10 +20,11 @@ int main()
     }
 
     Graph *HammingGraph = new Graph( 7, 3, mCheck );
+    Product *HammingProduct = new Product( HammingGraph, HammingGraph );
 
     CodeTest *MyTest = new CodeTest();
 
-    MyTest->TestCode( HammingGraph,
+    MyTest->TestProduct( HammingProduct,
                      0.0,
                      2.0,
                      0.05,
@@ -35,5 +37,6 @@ int main()
     free( mCheck );
 
     delete HammingGraph;
+    delete HammingProduct;
     delete MyTest;
 }
