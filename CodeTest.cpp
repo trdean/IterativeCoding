@@ -55,6 +55,51 @@ void CodeTest::TestCode( Graph *TestGraph,
     free( values );
 }
 
+void CodeTest::TestProduct( Product *TestProduct,
+                    double sigma_start,
+                    double sigma_stop,
+                    double step = 0.1,
+                    int max_iterations = 30,
+                    int sample_size = 1000,
+                    FILE *output = stdout )
+{
+    double sigma, BER, Uncoded_BER;
+    int i,j;
+
+    fprintf( output, "Sigma,    BER,      Uncoded BER\n" );
+
+    double *values = (double *) malloc( TestProduct->GetVariableLength() * 
+                                        sizeof(double) );
+
+    for ( sigma = sigma_start; sigma <= sigma_stop; sigma += step ) {
+        fprintf( output, "%f, ", sigma );
+        BER = 0.0;
+        Uncoded_BER = 0.0;
+        for ( i = 0; i < sample_size; i++ ) {
+            //Generate random samples; simulate sending all zeros
+            for ( j = 0; j < TestProduct->GetVariableLength(); j++ ) {
+                values[j] = RandomGaussian( sigma ) - 1;
+            }
+
+            //Set values on graph
+            TestProduct->SetVariablesFromReal( values, sigma );
+
+            TestProduct->Decode( max_iterations );
+
+            BER += CalculateBER( TestProduct );
+            Uncoded_BER += CalculateUncoded( values, 
+                                             TestProduct->GetVariableLength() );
+
+            //Output
+        }
+        BER = BER / (double) sample_size; 
+        Uncoded_BER = Uncoded_BER / (double) sample_size;
+        fprintf( output, "%f, %f\n", BER, Uncoded_BER );
+    }
+
+    free( values );
+}
+
 void CodeTest::TestDebug( Graph *TestGraph,
                           double sigma,
                           int iterations )
@@ -119,6 +164,26 @@ double CodeTest::CalculateBER( Graph *TestGraph )
     int *guess = (int *) malloc( number_variables * sizeof( int ) );
 
     TestGraph->OutputHard( guess );
+
+    number_incorrect = 0;
+
+    for ( i = 0; i < number_variables; i++ )
+        number_incorrect += guess[i];
+
+    free( guess );
+
+    return (double) number_incorrect / (double) number_variables;
+}
+
+double CodeTest::CalculateBER( Product *TestProduct )
+{
+    int i, number_incorrect, number_variables;
+
+    number_variables = TestProduct->GetVariableLength(); 
+
+    int *guess = (int *) malloc( number_variables * sizeof( int ) );
+
+    TestProduct->OutputHard( guess );
 
     number_incorrect = 0;
 
