@@ -27,12 +27,12 @@ Graph::Graph ( int dNumVariables, int dNumChecks, int **checkMatrix ) :
     }
 }
 
-Graph::Graph( std::vector<VariableNode *> *variableNodes, int dNumChecks, int **checkMatrix ) :
-    numVariables ( variableNodes->size() ),
-    numChecks ( dNumChecks )
+Graph::Graph( Graph *other, std::vector<VariableNode *> *variableNodes ) 
 {
     int i, j;
 
+    numVariables = other->GetVariableLength();
+    numChecks = other->GetCheckLength();
     AllocatedNodes = false;
 
     variables.resize( numVariables );
@@ -45,12 +45,12 @@ Graph::Graph( std::vector<VariableNode *> *variableNodes, int dNumChecks, int **
 
     for ( i = 0; i < numChecks; i++ ) {
         for ( j = 0; j < numVariables; j++ ) {
-            if ( checkMatrix[i][j] == 1 ) {
+            if ( other->CheckConnection( i, j ) ) {
                 checks[i]->PushReference( variables[j] );
                 variables[j]->PushReference( checks[i] );
             }
         }
-    }   
+    }
 }
 
 Graph::~Graph() 
@@ -192,6 +192,11 @@ bool Graph::CheckSyndrome()
             return false;
     
     return true;
+}
+
+VariableNode *Graph::GetVariable( int index )
+{
+    return variables[index];
 }
 
 void Graph::Debug()

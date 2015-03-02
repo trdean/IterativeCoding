@@ -9,7 +9,7 @@ class Graph
 {
     public:
         Graph( int dNumVariables, int dNumChecks, int **checkMatrix );
-        Graph( std::vector<VariableNode *> *variableNodes, int dNumChecks, int **checkMatrix );
+        Graph( Graph *other, std::vector<VariableNode *> *variableNodes );
         ~Graph();
         Graph( const Graph& other );
         Graph& operator=( const Graph& rhs );
@@ -24,6 +24,8 @@ class Graph
         int GetCheckLength() const;
         int GetVariableLength() const;
         bool CheckSyndrome();
+
+        VariableNode *GetVariable( int index );
 
         void Debug();
         void ViewGraph();
