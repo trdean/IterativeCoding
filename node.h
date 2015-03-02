@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 
 #define MAX_LL 100000
