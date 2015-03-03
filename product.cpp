@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "product.h"
 
 Product::Product( Graph *graph1, Graph *graph2 )
@@ -111,4 +112,20 @@ int Product::GetHeight()
 int Product::GetVariableLength()
 {
     return lenDim1*lenDim2;
+}
+
+void Product::Debug()
+{
+    int i, j;
+
+    printf("Variables:\n");
+
+    for( i = 0; i < lenDim2; i++ ) {
+        for ( j = 0; j < lenDim1; j++ ) {
+            printf( "%f  ", graphDim1[i]->GetVariable(j)->value );
+        }
+        printf("\n");
+    }
+
+    printf("\n\n");
 }

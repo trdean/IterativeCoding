@@ -16,6 +16,9 @@ parity : test/parity_test.cpp node.o graph.o
 bp_debug : test/bp_debug.cpp node.o graph.o CodeTest.o
 	$(CC) $(CFLAGS) -o test/bp_debug test/bp_debug.cpp node.cpp graph.cpp product.cpp CodeTest.cpp
 
+2d_debug : test/2d_debug.cpp node.o graph.o product.o CodeTest.o
+	$(CC) $(CFLAGS) -o test/2d_debug test/2d_debug.cpp node.cpp graph.cpp product.cpp CodeTest.cpp
+
 copy_test : test/copy_test.cpp node.o graph.o CodeTest.o
 	$(CC) $(CFLAGS) -o test/copy_test test/copy_test.cpp node.cpp graph.cpp product.cpp CodeTest.cpp
 

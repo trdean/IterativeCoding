@@ -23,6 +23,7 @@ class Product
         int GetHeight();
         int GetVariableLength();
 
+        void Debug();
 
     private:
         std::vector<Graph *> graphDim1;
