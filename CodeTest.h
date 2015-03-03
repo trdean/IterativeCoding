@@ -31,6 +31,10 @@ class CodeTest {
                         double sigma,
                         int iterations );
 
+        void TestDebug( Product *TestProduct,
+                        double sigma,
+                        int iterations );
+
     private:
         double RandomGaussian( double std_dev );
         double CalculateBER( Graph *TestGraph );

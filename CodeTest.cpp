@@ -129,6 +129,35 @@ void CodeTest::TestDebug( Graph *TestGraph,
     free( values );                                                 
 }
 
+void CodeTest::TestDebug( Product *TestProduct,
+                          double sigma,
+                          int iterations )
+{
+    int i;
+    int vars = TestProduct->GetVariableLength();
+
+    double *values = (double *) malloc( vars * sizeof(double) );
+
+    printf("Values\n");
+
+    for ( i = 0; i < vars; i++ ) {
+        values[i] = RandomGaussian( sigma ) - 1;
+        printf("%f\n", values[i]);
+    }
+
+    TestProduct->SetVariablesFromReal( values, sigma );
+    TestProduct->Debug();
+    printf("BER: %f\n\n", CalculateBER( TestProduct ) );
+
+    for ( i = 0; i < iterations; i++ ) {
+        TestProduct->DecodeRound();
+        TestProduct->Debug();
+        printf("BER: %f\n\n", CalculateBER( TestProduct ) );
+    }
+
+    free( values );                                                 
+}
+
 //Polar method of generating Gaussian variables, given by Knuth
 double CodeTest::RandomGaussian( double std_dev )
 {
