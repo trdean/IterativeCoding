@@ -125,6 +125,11 @@ bool Graph::CheckConnection( int checkIndex, int variableIndex ) const
     return variables[variableIndex]->IsReference( checks[checkIndex]->GetIndex() );
 }
 
+void Graph::SetVariablesFromReal( double *values )
+{
+    SetVariablesFromReal( values, variables[0]->GetSigma() );
+}
+
 void Graph::SetVariablesFromReal( double *values, double sigma )
 {
     int i;
@@ -141,6 +146,14 @@ void Graph::SetVariablesFromLL( double *ll )
 
     for ( i = 0; i < numVariables; i++ )
         variables[i]->SetValueFromLL( ll[i] );
+}
+
+void Graph::GetValues( double *values )
+{
+    int i;
+
+    for ( i = 0; i < numVariables; i++ )
+        values[i] = variables[i]->value;
 }
 
 bool Graph::Decode( int maxIterations = MAX_ITER_DEFAULT )

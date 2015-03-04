@@ -16,8 +16,10 @@ class Graph
 
         bool CheckConnection( int checkIndex, int variableIndex ) const;
 
+        void SetVariablesFromReal( double *values );
         void SetVariablesFromReal( double *values, double sigma );
         void SetVariablesFromLL( double *ll );
+        void GetValues( double *values );
         bool Decode( int maxIterations );
         void DecodeRound();
         void OutputHard( int *guess );
@@ -37,4 +39,5 @@ class Graph
         int numVariables;
         int numChecks;
         bool AllocatedNodes;
+        double sigma;
 };
