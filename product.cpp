@@ -1,130 +1,140 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include "product.h"
 
 Product::Product( Graph *graph1, Graph *graph2 )
 {
-    int i, j;
-    std::vector<VariableNode *> tmpVarVec;
+    int x, y;
 
-    lenDim1 = graph1->GetVariableLength();
-    lenDim2 = graph2->GetVariableLength();
+    graphVector.push_back( graph1 );
+    graphVector.push_back( graph2 );
+    
+    x = graph1->GetVariableLength();
+    y = graph2->GetVariableLength();
+    
+    dimensionWidth.push_back( y );
+    dimensionWidth.push_back( x );
 
-    //Make lenDim2 copies of graph1 and store them in a vector
-    for ( i = 0; i < lenDim2; i++ ) {
-        graphDim1.push_back( new Graph( *graph1 ) );
-    }
+    strideVector.push_back( 1 );
+    strideVector.push_back( y );
 
-    for ( i = 0; i < lenDim1; i++ ) {
-        for ( j = 0; j < lenDim2; j++ )
-            tmpVarVec.push_back( graphDim1[j]->GetVariable( i ) );
-        
-        graphDim2.push_back( new Graph( graph2, &tmpVarVec ) );
-        tmpVarVec.clear();
-    }
+    dimensionLength.push_back( y );
+    dimensionLength.push_back( 1 );
+
+    dimension = 2;
+    totalVariables = x*y;
+
+    valueVector.resize( totalVariables );
+
+    if ( y > x )
+        maxWidth = y;
+    else
+        maxWidth = x;
 }
 
-Product::~Product()
-{
-    int i;
-
-    for ( i = 0; i < lenDim2; i++ )
-        delete graphDim1[i];
-
-    for ( i = 0; i < lenDim1; i++ )
-        delete graphDim2[i];
-}
 
 bool Product::Decode( int maxIterations )
 {
     int i;
 
     for ( i = 0; i < maxIterations; i++ ) {
-        DecodeRound();
-        if( CheckSyndrome() )
+        if( DecodeRound() )
             return true;
     }
 
     return false;
 }
 
-void Product::DecodeRound()
+bool Product::DecodeRound()
 {
-    int i;
+    int i, j;
+    bool syndrome = true;
+    double *values = (double *) malloc( maxWidth * sizeof( double ) );
 
-    for ( i = 0; i < lenDim2; i++ )
-        graphDim1[i]->DecodeRound();
+    for( i = 0; i < dimension; i++ ) {
+        for( j = 0; j < dimensionWidth[i]; j++ ) {
+            GetValues( i, j, values );
+            graphVector[i]->SetVariablesFromLL( values );
+            graphVector[i]->DecodeRound();
+            graphVector[i]->GetValues( values );
+            syndrome &= graphVector[i]->CheckSyndrome();
+            SetValues( i, j, values );
+        }
+        if( syndrome )
+            break;
+    }    
 
-    for ( i = 0; i < lenDim1; i++ )
-        graphDim2[i]->DecodeRound();
+    free( values );
+
+    return syndrome;
 }
 
-bool Product::CheckSyndrome()
+void Product::GetValues( int dimension, int index, double *values )
 {
-    int i;
-    
-    for ( i = 0; i < lenDim2; i++ )
-        if (!graphDim1[i]->CheckSyndrome())
-            return false;
+    int i, width, length, stride;
 
-    for ( i = 0; i < lenDim1; i++ )
-        if (!graphDim2[i]->CheckSyndrome())
-            return false;
+    width  = dimensionWidth[dimension];
+    length = dimensionLength[dimension];
+    stride = strideVector[dimension];
 
-    return true;
+    for( i = 0; i < width; i++ )
+        values[i] = valueVector[index*length + i*stride];
+}
+
+void Product::SetValues( int dimension, int index, double *values )
+{
+    int i, width, length, stride;
+
+    width  = dimensionWidth[dimension];
+    length = dimensionLength[dimension];
+    stride = strideVector[dimension];
+
+    for( i = 0; i < width; i++ )
+        valueVector[index*length + i*stride] = values[i];
+
 }
 
 void Product::SetVariablesFromReal( double *values, double sigma )
 {
     int i;
 
-    for ( i = 0; i < lenDim2; i++ ) {
-        graphDim1[i]->SetVariablesFromReal( &values[i*lenDim1], sigma );
-    }
+    for ( i = 0; i < totalVariables; i++ ) 
+        valueVector[i] = -2 * values[i] / (sigma * sigma);
 }
 
 void Product::SetVariablesFromLL( double *ll )
 {
     int i;
 
-    for ( i = 0; i < lenDim2; i++ ) {
-        graphDim1[i]->SetVariablesFromLL( &ll[i*lenDim1] );
-    }
+    for ( i = 0; i < totalVariables; i++ )
+        valueVector[i] = ll[i];
 }
 
 void Product::OutputHard( int *guess )
 {
-    int i, j;
-    for ( i = 0; i < lenDim2; i++ )
-        for ( j = 0; j < lenDim1; j++ )
-            guess[i*lenDim2 + j] = graphDim1[i]->GetVariable( j )->GetHardValue();
-}
+    int i;
 
-int Product::GetWidth()
-{
-    return lenDim2;
-}
-
-int Product::GetHeight()
-{
-    return lenDim1;
+    for ( i = 0; i < totalVariables; i++ ) {
+        if ( valueVector[i] >= 0 )
+            guess[i] = 0;
+        else
+            guess[i] = 1;
+    }        
 }
 
 int Product::GetVariableLength()
 {
-    return lenDim1*lenDim2;
+    return totalVariables;
 }
 
 void Product::Debug()
 {
-    int i, j;
+    int i;
 
     printf("Variables:\n");
 
-    for( i = 0; i < lenDim2; i++ ) {
-        for ( j = 0; j < lenDim1; j++ ) {
-            printf( "%f  ", graphDim1[i]->GetVariable(j)->value );
-        }
-        printf("\n");
+    for( i = 0; i < totalVariables; i++ ) {
+        printf( "%f  ", valueVector[i] );
     }
 
     printf("\n\n");

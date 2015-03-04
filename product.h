@@ -8,27 +8,31 @@ class Product
 {
     public:
         Product( Graph *graph1, Graph *graph2 );
-        ~Product();
+        //~Product();
         //Copy
         //Assignment
 
         bool Decode( int maxIterations );
-        void DecodeRound();
-        bool CheckSyndrome();
+        bool DecodeRound();
+
+        void GetValues( int dimension, int index, double *values );
+        void SetValues( int dimension, int index, double *values );
 
         void SetVariablesFromReal( double *values, double sigma );
         void SetVariablesFromLL( double *ll );
         void OutputHard( int *guess );
-        int GetWidth();
-        int GetHeight();
         int GetVariableLength();
 
         void Debug();
 
     private:
-        std::vector<Graph *> graphDim1;
-        std::vector<Graph *> graphDim2;
+        int dimension;
+        int totalVariables;
+        int maxWidth;
 
-        int lenDim1;
-        int lenDim2;
+        std::vector<Graph *> graphVector;
+        std::vector<int> dimensionWidth;
+        std::vector<int> dimensionLength;
+        std::vector<int> strideVector;
+        std::vector<double> valueVector;
 };
