@@ -2,7 +2,7 @@ CC = g++
 CFLAGS = -Wall -g -std=c++11
 LIBS = -lm -lstdc++
 
-default : hamming 2d_hamming parity bp_debug copy_test
+default : hamming 2d_hamming parity bp_debug copy_test 2d_debug
 
 hamming : test/hamming_test.cpp node.o graph.o product.o CodeTest.o
 	$(CC) $(CFLAGS) -o test/hamming_test test/hamming_test.cpp node.cpp graph.cpp product.cpp CodeTest.cpp
