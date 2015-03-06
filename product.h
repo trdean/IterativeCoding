@@ -15,8 +15,10 @@ class Product
         bool Decode( int maxIterations );
         bool DecodeRound();
 
-        void GetValues( int dimension, int index, double *values );
-        void SetValues( int dimension, int index, double *values );
+        void GetValues( std::vector<int> *coordinates, int dimension, double *values );
+        void SetValues( std::vector<int> *coordinates, int dimension, double *values );
+        int CoordinatesToIndex( std::vector<int> *coordinate );
+        std::vector<std::vector<int> > *GenerateProduct( int dimToOmit );
 
         void SetVariablesFromReal( double *values, double sigma );
         void SetVariablesFromLL( double *ll );
@@ -24,6 +26,7 @@ class Product
         int GetVariableLength();
 
         void Debug();
+        void DebugVector( std::vector<std::vector<int> > *vector );
 
     private:
         int dimension;
@@ -32,7 +35,5 @@ class Product
 
         std::vector<Graph *> graphVector;
         std::vector<int> dimensionWidth;
-        std::vector<int> dimensionLength;
-        std::vector<int> strideVector;
         std::vector<double> valueVector;
 };
