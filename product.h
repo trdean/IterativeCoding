@@ -12,6 +12,8 @@ class Product
         //Copy
         //Assignment
 
+        void Expand( Graph *graph );
+
         bool Decode( int maxIterations );
         bool DecodeRound();
 

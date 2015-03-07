@@ -12,8 +12,8 @@ Product::Product( Graph *graph1, Graph *graph2 )
     x = graph1->GetVariableLength();
     y = graph2->GetVariableLength();
     
-    dimensionWidth.push_back( y );
     dimensionWidth.push_back( x );
+    dimensionWidth.push_back( y );
 
     dimension = 2;
     totalVariables = x*y;
@@ -24,6 +24,24 @@ Product::Product( Graph *graph1, Graph *graph2 )
         maxWidth = y;
     else
         maxWidth = x;
+}
+
+void Product::Expand( Graph *graph )
+{
+    int width;
+
+    graphVector.push_back( graph );
+
+    width = graph->GetVariableLength();
+
+    dimensionWidth.push_back( width );
+    dimension++;
+
+    totalVariables *= width;
+    valueVector.resize( totalVariables );
+
+    if ( width > maxWidth )
+        maxWidth = width;
 }
 
 
