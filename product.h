@@ -1,18 +1,17 @@
 #pragma once
 
 #include <vector>
-#include "node.h"
-#include "graph.h"
+#include "linearcode.h"
 
 class Product
 {
     public:
-        Product( Graph *graph1, Graph *graph2 );
+        Product( LinearCode *code1, LinearCode *code2 );
         //~Product();
         //Copy
         //Assignment
 
-        void Expand( Graph *graph );
+        void Expand( LinearCode *code );
 
         bool Decode( int maxIterations );
         bool DecodeRound();
@@ -35,7 +34,7 @@ class Product
         int totalVariables;
         int maxWidth;
 
-        std::vector<Graph *> graphVector;
+        std::vector<LinearCode *> codeVector;
         std::vector<int> dimensionWidth;
         std::vector<double> valueVector;
 };

@@ -2,15 +2,15 @@
 #include <stdio.h>
 #include "product.h"
 
-Product::Product( Graph *graph1, Graph *graph2 )
+Product::Product( LinearCode *code1, LinearCode *code2 )
 {
     int x, y;
 
-    graphVector.push_back( graph1 );
-    graphVector.push_back( graph2 );
+    codeVector.push_back( code1 );
+    codeVector.push_back( code2 );
     
-    x = graph1->GetVariableLength();
-    y = graph2->GetVariableLength();
+    x = code1->GetVariableLength();
+    y = code2->GetVariableLength();
     
     dimensionWidth.push_back( x );
     dimensionWidth.push_back( y );
@@ -26,13 +26,13 @@ Product::Product( Graph *graph1, Graph *graph2 )
         maxWidth = x;
 }
 
-void Product::Expand( Graph *graph )
+void Product::Expand( LinearCode *code )
 {
     int width;
 
-    graphVector.push_back( graph );
+    codeVector.push_back( code );
 
-    width = graph->GetVariableLength();
+    width = code->GetVariableLength();
 
     dimensionWidth.push_back( width );
     dimension++;
@@ -73,10 +73,10 @@ bool Product::DecodeRound()
             //Reference to the jth vector from the list
             thisList = &(*productList)[j];
             GetValues( thisList, i, values );
-            graphVector[i]->SetVariablesFromLL( values );
-            graphVector[i]->DecodeRound();
-            graphVector[i]->GetValues( values );
-            syndrome &= graphVector[i]->CheckSyndrome();
+            codeVector[i]->SetVariablesFromLL( values );
+            codeVector[i]->DecodeRound();
+            codeVector[i]->GetValues( values );
+            syndrome &= codeVector[i]->CheckSyndrome();
             SetValues( thisList, i, values );
         }
 
