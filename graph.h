@@ -1,11 +1,12 @@
 #pragma once
 
 #include <vector>
+#include "linearcode.h"
 #include "node.h"
 
 #define MAX_ITER_DEFAULT 30
 
-class Graph
+class Graph : public LinearCode
 {
     public:
         //Graph( int dNumVariables, int dNumChecks, int **checkMatrix );
@@ -33,7 +34,7 @@ class Graph
         void Debug();
         void ViewGraph();
 
-    private:
+    protected:
         std::vector<VariableNode *>   variables;
         std::vector<CheckNode *>      checks;
 
