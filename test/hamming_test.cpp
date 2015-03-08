@@ -1,24 +1,17 @@
 #include <stdio.h>
+#include <vector>
 
 #include "../CodeTest.h"
 #include "../graph.h"
 
 int main() 
 {
-    int hammingCheck[][7] = { { 1, 1, 1, 0, 1, 0, 0},
-       			      { 1, 1, 0, 1, 0, 1, 0},
-			      { 1, 0, 1, 1, 0, 0, 1} };
+    std::vector<std::vector<int> > hammingCheck;
+    hammingCheck.push_back(std::vector<int> ({1, 1, 1, 0, 1, 0, 0}));
+    hammingCheck.push_back(std::vector<int> ({1, 1, 0, 1, 0, 1, 0}));
+    hammingCheck.push_back(std::vector<int> ({1, 0, 1, 1, 0, 0, 1}));
 
-    int **mCheck = (int **) malloc(3*sizeof(int *));
-    int i,j;
-    for ( i = 0; i < 3; i++ ) {
-        mCheck[i] = (int *) malloc(7*sizeof(int *));
-        for ( j = 0; j < 7; j++ ) {
-            mCheck[i][j] = hammingCheck[i][j];
-        }
-    }
-
-    Graph *HammingGraph = new Graph( 7, 3, mCheck );
+    Graph *HammingGraph = new Graph( &hammingCheck );
 
     CodeTest *MyTest = new CodeTest();
 
@@ -29,10 +22,6 @@ int main()
                       10,
                     10000,
                     stdout );  
-
-    for (i = 0; i < 3; i++ )
-        free( mCheck[i] );
-    free( mCheck );
 
     delete HammingGraph;
     delete MyTest;
