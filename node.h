@@ -14,35 +14,40 @@
 class Node
 {
     public:
-        Node();
-        virtual ~Node();
-        Node( const Node& other );
-        Node& operator=( const Node& rhs ); 
+        Node();      ///< generic constructor inherited by all children 
+        virtual ~Node();  ///< Vitual destructor doesn't to any fancy 
+        Node( const Node& other );  ///< Copy constructor
+        Node& operator=( const Node& rhs );   ///< Assignment operator 
 
-        virtual void Update() = 0;
-        virtual void Debug() = 0;
+        virtual void Update() = 0;  ///< Virtual update function
+        virtual void Debug() = 0;   ///< Virtual debug function 
         
-        void PushReference( Node *ref );
-        void PopReference();
-        void InsertReference( Node *ref, int index );
-        void RemoveReference( int index );
-        bool IsReference( int otherIndex );
+        void PushReference( Node *ref );    ///< Adds a pointer to ref to the back of the reference list
+        void PopReference();                ///< Removes the last reference 
+        void InsertReference( Node *ref, int index );  ///< Inserts a pointer to ref at position index
+        void RemoveReference( int index );     ///< Removes reference at index
+        bool IsReference( int otherIndex );    ///< Checks if node with index is a reference 
 
-        double GetMessage( Node *ref ) const;
-        int GetDegree() const;
-        int GetIndex() const;
-        Node *GetReference( int index );
+        double GetMessage( Node *ref ) const;  ///< Gets the message for node *ref
+        int GetDegree() const;                 ///< Returns the number of references
+        int GetIndex() const;                  ///< Returns the index of the node
+        Node *GetReference( int index );       ///< Returns reference to reference at index
 
         double value;
 
     protected:
 
-        int index;
-        int degree;
-        std::vector<Node *> references;
-        std::vector<double> messages;
+        int index;      ///< I don't think this is used any more?
+        int degree;     ///< Number of references
+        std::vector<Node *> references;  //Pointer to other nodes connected
+        std::vector<double> messages;    //Vector of outgoing messages
 
 };
+
+//! Variables Node class
+/*!
+    Some descriptive comment about this class.
+ */
 
 class VariableNode : public Node
 {
