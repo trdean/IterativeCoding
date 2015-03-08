@@ -8,7 +8,8 @@
 class Graph
 {
     public:
-        Graph( int dNumVariables, int dNumChecks, int **checkMatrix );
+        //Graph( int dNumVariables, int dNumChecks, int **checkMatrix );
+        Graph( std::vector<std::vector<int> > *checkMatrix );
         Graph( Graph *other, std::vector<VariableNode *> *variableNodes );
         ~Graph();
         Graph( const Graph& other );
@@ -36,8 +37,8 @@ class Graph
         std::vector<VariableNode *>   variables;
         std::vector<CheckNode *>      checks;
 
-        int numVariables;
-        int numChecks;
+        unsigned numVariables;
+        unsigned numChecks;
         bool AllocatedNodes;
         double sigma;
 };

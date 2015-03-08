@@ -1,11 +1,14 @@
 #include <stdio.h>
+#include <vector>
+#include <exception>
 #include "graph.h"
 
+/* Old constructor, now deprecated
 Graph::Graph ( int dNumVariables, int dNumChecks, int **checkMatrix ) :
     numVariables( dNumVariables ),
     numChecks   ( dNumChecks )
 {
-    int i, j;
+    unsigned i, j;
 
     AllocatedNodes = true;
 
@@ -26,10 +29,45 @@ Graph::Graph ( int dNumVariables, int dNumChecks, int **checkMatrix ) :
         }
     }
 }
+*/
+Graph::Graph( std::vector<std::vector<int> > *checkMatrix )
+{
+    unsigned i, j;
+
+    numChecks = checkMatrix->size();
+    numVariables = (*checkMatrix)[0].size();
+
+    AllocatedNodes = true;
+
+    variables.resize( numVariables );
+    checks.resize( numChecks );
+
+    for ( i = 0; i < numChecks; i++ )
+        checks[i] = new CheckNode();
+    for ( i = 0; i < numVariables; i++ )
+        variables[i] = new VariableNode();
+
+    for ( i = 0; i < numChecks; i++ ) {
+        if ( (*checkMatrix)[i].size() != numVariables ) {
+            for ( j = 0; j < numChecks; j++ )
+                delete checks[i];
+            for ( j = 0; j < numVariables; j++ )
+                delete variables[i];
+
+            throw;
+        }
+        for ( j = 0; j < numVariables; j++ ) {
+            if ( (*checkMatrix)[i][j] == 1 ) {
+                checks[i]->PushReference( variables[j] );
+                variables[j]->PushReference( checks[i] );
+            }
+        }
+    }
+}
 
 Graph::Graph( Graph *other, std::vector<VariableNode *> *variableNodes ) 
 {
-    int i, j;
+    unsigned i, j;
 
     numVariables = other->GetVariableLength();
     numChecks = other->GetCheckLength();
@@ -55,7 +93,7 @@ Graph::Graph( Graph *other, std::vector<VariableNode *> *variableNodes )
 
 Graph::~Graph() 
 {
-    int i;
+    unsigned i;
 
     if (AllocatedNodes) {
         for ( i = 0; i < numVariables; i++ ) 
@@ -68,7 +106,7 @@ Graph::~Graph()
 
 Graph::Graph( const Graph& other )
 {
-    int i, j;
+    unsigned i, j;
 
     numVariables = other.GetVariableLength();
     numChecks = other.GetCheckLength();
@@ -94,7 +132,7 @@ Graph::Graph( const Graph& other )
 
 Graph& Graph::operator=( const Graph& rhs )
 {
-    int i, j;
+    unsigned i, j;
 
     numVariables = rhs.GetVariableLength();
     numChecks = rhs.GetCheckLength();
@@ -132,7 +170,7 @@ void Graph::SetVariablesFromReal( double *values )
 
 void Graph::SetVariablesFromReal( double *values, double sigma )
 {
-    int i;
+    unsigned i;
 
     for ( i = 0; i < numVariables; i++ ) {
         variables[i]->SetSigma( sigma );
@@ -142,7 +180,7 @@ void Graph::SetVariablesFromReal( double *values, double sigma )
 
 void Graph::SetVariablesFromLL( double *ll )
 {
-    int i;
+    unsigned i;
 
     for ( i = 0; i < numVariables; i++ )
         variables[i]->SetValueFromLL( ll[i] );
@@ -150,7 +188,7 @@ void Graph::SetVariablesFromLL( double *ll )
 
 void Graph::GetValues( double *values )
 {
-    int i;
+    unsigned i;
 
     for ( i = 0; i < numVariables; i++ )
         values[i] = variables[i]->value;
@@ -171,7 +209,7 @@ bool Graph::Decode( int maxIterations = MAX_ITER_DEFAULT )
 
 void Graph::DecodeRound()
 {
-    int i;
+    unsigned i;
 
     for ( i = 0; i < numChecks; i++ )
         checks[i]->Update();
@@ -181,7 +219,8 @@ void Graph::DecodeRound()
 
 void Graph::OutputHard( int *guess )
 {
-    int i;
+    unsigned i;
+
     for ( i = 0; i < numVariables; i++ )
         guess[i] = variables[i]->GetHardValue(); 
 }
@@ -198,7 +237,7 @@ int Graph::GetVariableLength() const
 
 bool Graph::CheckSyndrome()
 {
-    int i;
+    unsigned i;
 
     for ( i = 0; i < numChecks; i++ )
         if (!checks[i]->Syndrome())
@@ -214,7 +253,7 @@ VariableNode *Graph::GetVariable( int index )
 
 void Graph::Debug()
 {
-    int i;
+    unsigned i;
 
     printf("-------------------------------------------\n");
     printf("Graph debug info\n");
@@ -231,7 +270,8 @@ void Graph::Debug()
 
 void Graph::ViewGraph()
 {
-    int i, j;
+    unsigned i;
+    int j;
 
     printf("Graph connections\n\n");
 
