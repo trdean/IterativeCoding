@@ -2,7 +2,7 @@ CC = g++
 CFLAGS = -Wall -g -std=c++11
 LIBS = -lm -lstdc++
 
-default : hamming 2d_hamming parity bp_debug copy_test 2d_debug 3d_test
+default : hamming 2d_hamming parity bp_debug copy_test 2d_debug 2d_extended 3d_test 3d_extended
 
 hamming : test/hamming_test.cpp node.o graph.o product.o CodeTest.o
 	$(CC) $(CFLAGS) -o test/hamming_test test/hamming_test.cpp node.cpp graph.cpp product.cpp CodeTest.cpp
@@ -10,11 +10,17 @@ hamming : test/hamming_test.cpp node.o graph.o product.o CodeTest.o
 2d_hamming : test/2d_hamming_test.cpp node.o graph.o product.o CodeTest.o
 	$(CC) $(CFLAGS) -o test/2d_hamming_test test/2d_hamming_test.cpp node.cpp graph.cpp product.cpp CodeTest.cpp 
 
+2d_extended : test/2d_extended_hamming.cpp node.o graph.o product.o CodeTest.o
+	$(CC) $(CFLAGS) -o test/2d_extended_hamming test/2d_extended_hamming.cpp node.cpp graph.cpp product.cpp CodeTest.cpp  
+
 parity : test/parity_test.cpp node.o graph.o 
 	$(CC) $(CFLAGS) -o test/parity_test test/parity_test.cpp node.cpp graph.cpp 
 
 3d_test : test/3d_test.cpp node.o graph.o product.o CodeTest.o
 	$(CC) $(CFLAGS) -o test/3d_test test/3d_test.cpp node.cpp graph.cpp product.cpp CodeTest.cpp 
+
+3d_extended : test/3d_extended.cpp node.o graph.o product.o CodeTest.o
+	$(CC) $(CFLAGS) -o test/3d_extended test/3d_extended.cpp node.cpp graph.cpp product.cpp CodeTest.cpp 
 
 bp_debug : test/bp_debug.cpp node.o graph.o CodeTest.o
 	$(CC) $(CFLAGS) -o test/bp_debug test/bp_debug.cpp node.cpp graph.cpp product.cpp CodeTest.cpp
@@ -41,4 +47,4 @@ doc:
 	doxygen doxygen.cfg
 
 clean:
-	rm *.o test/parity_test test/hamming_test test/bp_debug test/copy_test test/*.o
+	rm *.o test/parity_test test/hamming_test test/bp_debug test/copy_test test/*.o doc/*
