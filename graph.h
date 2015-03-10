@@ -10,6 +10,7 @@ class Graph : public LinearCode
 {
     public:
         //Graph( int dNumVariables, int dNumChecks, int **checkMatrix );
+        Graph();
         Graph( std::vector<std::vector<int> > *checkMatrix );
         Graph( Graph *other, std::vector<VariableNode *> *variableNodes );
         ~Graph();
@@ -30,6 +31,7 @@ class Graph : public LinearCode
         bool CheckSyndrome();
 
         VariableNode *GetVariable( int index );
+        CheckNode *GetCheck( int index );
 
         void Debug();
         void ViewGraph();

@@ -30,7 +30,18 @@ Graph::Graph ( int dNumVariables, int dNumChecks, int **checkMatrix ) :
     }
 }
 */
-Graph::Graph( std::vector<std::vector<int> > *checkMatrix )
+
+Graph::Graph() : 
+    LinearCode()
+{
+    numVariables = 0;
+    numChecks = 0;
+    AllocatedNodes = false;
+    sigma = 0.0;
+}
+
+Graph::Graph( std::vector<std::vector<int> > *checkMatrix ) :
+    LinearCode()
 {
     unsigned i, j;
 
@@ -65,7 +76,8 @@ Graph::Graph( std::vector<std::vector<int> > *checkMatrix )
     }
 }
 
-Graph::Graph( Graph *other, std::vector<VariableNode *> *variableNodes ) 
+Graph::Graph( Graph *other, std::vector<VariableNode *> *variableNodes ) :
+    LinearCode()
 {
     unsigned i, j;
 
@@ -249,6 +261,11 @@ bool Graph::CheckSyndrome()
 VariableNode *Graph::GetVariable( int index )
 {
     return variables[index];
+}
+
+CheckNode *Graph::GetCheck( int index )
+{
+    return checks[index];
 }
 
 void Graph::Debug()
