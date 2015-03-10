@@ -41,6 +41,10 @@ Node& Node::operator=( const Node& rhs )
 
 void Node::PushReference( Node *ref )
 {
+    //If ref is already in refernces then just ignore it
+    if ( IsReference( ref->GetIndex() ) )
+        return;
+
     references.push_back( ref );
     messages.push_back( 0.0 );
     degree++;
@@ -55,6 +59,9 @@ void Node::PopReference()
 
 void Node::InsertReference( Node *ref, int index )
 {
+    if ( IsReference( ref->GetIndex() ) )
+        return;
+
     references.insert( references.begin() + index, ref );
     messages.insert( messages.begin() + index, 0.0 );
     degree++;
