@@ -110,10 +110,12 @@ Graph::~Graph()
     if (AllocatedNodes) {
         for ( i = 0; i < numVariables; i++ ) 
             delete variables[i];
+        variables.clear();
     }
 
     for ( i = 0; i < numChecks; i++ )
        delete checks[i]; 
+    checks.clear();
 }
 
 Graph::Graph( const Graph& other )
