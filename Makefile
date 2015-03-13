@@ -22,6 +22,9 @@ parity : test/parity_test.cpp node.o graph.o
 3d_extended : test/3d_extended.cpp node.o graph.o product.o CodeTest.o
 	$(CC) $(CFLAGS) -o test/3d_extended test/3d_extended.cpp node.cpp graph.cpp product.cpp CodeTest.cpp 
 
+ldpc: test/RegularTest.cpp ldpc.o graph.o node.o CodeTest.o product.o
+	$(CC) $(CFLAGS) -o test/RegularTest test/RegularTest.cpp ldpc.cpp graph.cpp node.cpp CodeTest.cpp product.cpp
+
 bp_debug : test/bp_debug.cpp node.o graph.o CodeTest.o
 	$(CC) $(CFLAGS) -o test/bp_debug test/bp_debug.cpp node.cpp graph.cpp product.cpp CodeTest.cpp
 
@@ -30,6 +33,9 @@ bp_debug : test/bp_debug.cpp node.o graph.o CodeTest.o
 
 copy_test : test/copy_test.cpp node.o graph.o CodeTest.o
 	$(CC) $(CFLAGS) -o test/copy_test test/copy_test.cpp node.cpp graph.cpp product.cpp CodeTest.cpp
+
+ldpc.o : ldpc.cpp ldpc.h graph.cpp graph.h linearcode.h node.h
+	$(CC) $(CFLAGS) -c ldpc.cpp graph.cpp $(LIBS)
 
 node.o : node.cpp node.h
 	$(CC) $(CFLAGS) -c node.cpp $(LIBS)
