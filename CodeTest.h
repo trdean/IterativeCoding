@@ -27,6 +27,10 @@ class CodeTest {
                           int sample_size,
                           FILE *output );
 
+        void Evolution( Graph *TestGraph,
+                        double sigma,
+                        int iterations );
+
         void TestDebug( Graph *TestGraph,
                         double sigma,
                         int iterations );

@@ -100,6 +100,36 @@ void CodeTest::TestProduct( Product *TestProduct,
     free( values );
 }
 
+void CodeTest::Evolution( Graph *TestGraph,
+                          double sigma,
+                          int iterations )
+{
+    int i;
+    int vars = TestGraph->GetVariableLength();
+    double BER, Uncoded_BER;
+
+    double *values = (double *) malloc( vars * sizeof(double) );
+
+    for ( i = 0; i < vars; i++ )
+        values[i] = RandomGaussian( sigma ) - 1;
+
+
+    TestGraph->SetVariablesFromReal( values, sigma );
+
+    Uncoded_BER = CalculateUncoded( values, TestGraph->GetVariableLength() );
+    printf("Uncoded BER: %f\n", Uncoded_BER);
+
+    for ( i = 0; i < iterations; i++ ) {
+        TestGraph->DecodeRound();
+        
+        BER = CalculateBER( TestGraph );
+        printf("Iteration %d: %f\n", i, BER);
+    }
+
+    free( values );                                                 
+   
+}
+
 void CodeTest::TestDebug( Graph *TestGraph,
                           double sigma,
                           int iterations )
