@@ -43,15 +43,55 @@ Ldpc::Ldpc( int numberVariables,
     for ( i = numChecks - edgeRemainder; i < numChecks; i++ )
         checkDegrees[i]++;
 
-    FixDoubleEdges = true;
 
     GenerateUnpermutedEdgeList();
     PermuteEdgeList();
+    FixDoubleEdges();
     BuildGraph();    
+}
+
+Ldpc::Ldpc( int numberVariables,
+            std::vector<double> lambda,
+            std::vector<double> rho ) :
+    Graph()
+{
+    unsigned i;
+    std::vector<int> VariablesByDegree;
+    std::vector<int> ChecksByDegree;
+
+    srand(time(NULL));
+
+    //Setup variable list
+    numVariables = numberVariables;
+    VariablesByDegree = LambdaToVariables( numVariables, lambda );
+    BinToList( VariablesByDegree, &variableDegrees ); 
+    
+    for ( i = 0; i < variableDegrees.size(); i++ )
+        numEdges += variableDegrees[i];
+
+    //Setup check list
+    ChecksByDegree = RhoToChecks( numEdges, rho );
+    BinToList( ChecksByDegree, &checkDegrees );
+    numChecks = checkDegrees.size();
+
+    //Allocate nodes
+    AllocatedNodes = true;
+    for ( i = 0; i < numChecks; i++ )
+        checks.push_back( new CheckNode() );
+    for ( i = 0; i < numVariables; i++ )
+        variables.push_back( new VariableNode() );
+
+    GenerateUnpermutedEdgeList();
+    PermuteEdgeList();
+    FixDoubleEdges();
+    BuildGraph();
 }
 
 Ldpc::~Ldpc()
 {
+    printf("Ldpc dtor\n");
+
+    numEdges = 0;
 /*
     unsigned i;
 
@@ -121,30 +161,30 @@ void Ldpc::PermuteEdgeList()
 void Ldpc::BuildGraph()
 {
     int i, varIndex, checkIndex;
-    int deduped = 0;
 
     for( i = 0; i < numEdges; i++ ) {
-        //Becomes true if we are not checking doubles or if we see that it is not
-        //a double
-        while( deduped != 2 ) {
-            varIndex = EdgeListByVariable[i];
-            checkIndex = GetCheckByEdgeIndex(i);
+        varIndex = EdgeListByVariable[i];
+        checkIndex = GetCheckByEdgeIndex(i);
             
-            if( FixDoubleEdges && deduped != 1 ) {
-                //Check to see if we have already added this edge
-                if( variables[varIndex]->
-                        IsReference( checks[checkIndex]->GetIndex() ) ) {
-                    MoveEdge(i);
-                    deduped = 1;
-                } else deduped = 2;
-            } else deduped = 2;
-        }
-        deduped = 0;
-
         //Now add the connections
         checks[checkIndex]->PushReference( variables[varIndex] );
         variables[varIndex]->PushReference( checks[checkIndex] );
     }
+}
+
+void Ldpc::FixDoubleEdges()
+{
+    int i, varIndex, checkIndex;
+
+    for( i = 0; i < numEdges; i++ ) {
+        varIndex = EdgeListByVariable[i];
+        checkIndex = GetCheckByEdgeIndex(i);
+            
+        if( variables[varIndex]->IsReference( checks[checkIndex] ) )
+              MoveEdge(i);
+    
+    }
+   
 }
 
 /*
@@ -178,7 +218,7 @@ void Ldpc::MoveEdge( int index )
         //The check if moving the old variable node to a new check node will
         //create a double edge there.
         newCheck = GetCheckByEdgeIndex( newIndex );
-        if ( variables[badEdgeValue]->IsReference( checks[newCheck]->GetIndex() ) )
+        if ( variables[badEdgeValue]->IsReference( checks[newCheck] ) )
             continue;
 
         //Perform the swap
@@ -204,6 +244,150 @@ int Ldpc::GetCheckByEdgeIndex( int index )
     return i;
 }
 
+/*
+ * Use this to convert from the lists returned from LambdaToVariables
+ * to the format used by variableDegrees and checkDegrees.  The intent
+ * is that you pass the pointer to the member variable into this method
+ *
+ * ex:
+ * Bins:
+ * { 0, 2, 0, 3 }
+ *
+ * *result:
+ * { 2, 2, 4, 4, 4 }
+ * 
+ */
+void Ldpc::BinToList( std::vector<int> Bins, std::vector<int> *result )
+{
+   unsigned i;
+   int j;
+   
+    for ( i = 0; i < Bins.size(); i++ ) {
+        for ( j = 0; j < Bins[i]; j++ )
+            result->push_back( i+1 );
+    }
+}
+
+/*
+ * Takes a polynomial in the edge perspective and returns a variable list
+ * This is a binned list of degrees, stored like this:
+ *
+ * Index    :  0   1   2   3   4  ...
+ * Degree   :  1   2   3   4   5  ... 
+ * Num Nodes:  0   3   5   2   1  ...
+ *
+ */
+std::vector<int> Ldpc::LambdaToVariables( int NumberVariables, 
+                                          std::vector<double> EdgeNormal )
+{
+    unsigned i;
+    int vars = 0;
+    int temp;
+    std::vector<int> Variables;
+
+    //Convert perspective
+    std::vector<double> L = EdgeNormalToNodeNormal( EdgeNormal );
+
+    //Scale and round
+    for ( i = 0; i < L.size(); i++ ) {
+        temp = (int) ((NumberVariables*L[i]) + 0.5);
+        vars += temp;
+        Variables.push_back( temp );
+    }
+
+    //Adjust size to account for rounding.
+    //Start at the back of the list and either add or remove nodes
+    //until we have the right number
+    while ( NumberVariables != vars ) {
+        for ( i = Variables.size(); i > 0; i-- ) {
+            if ( Variables[i] != 0 ) {
+                if (NumberVariables > vars) {
+                    Variables[i]++;
+                    vars++;
+                } else if (NumberVariables < vars) {
+                    Variables[i]--;
+                    vars--;
+                }
+            }
+        }
+    }
+
+    return Variables;
+}
+
+
+/*
+ * Converts a normalized edge-perspective distribution to a normalized node-
+ * persepective distribution. 
+ */
+std::vector<double> Ldpc::EdgeNormalToNodeNormal( std::vector<double> EdgeNormal )
+{
+    unsigned i;
+    double average_lambda;
+    std::vector<double> lambda;
+
+    //Find the average edges per node
+    average_lambda = 0.0;
+    for ( i = 0; i < EdgeNormal.size(); i++ )
+        average_lambda += EdgeNormal[i]/(i+1);
+
+    //Find the fraction of nodes by degree
+    for ( i = 0; i < EdgeNormal.size(); i++ )
+        lambda.push_back( EdgeNormal[i]/( average_lambda * (i+1) ) );
+
+    return lambda;
+}
+
+/*
+ * When we need to compute our check list, we already know how many edges
+ * we have, so it's much easier to stay in the edge perspective.
+ *
+ * This outputs a list in the same format as LambdaToVariables.
+ */
+std::vector<int> Ldpc::RhoToChecks( int NumberEdges, 
+                                    std::vector<double> EdgeNormal )
+{
+    unsigned i;
+    std::vector<int> result;
+    int ActualEdges;
+    int temp;
+
+    ActualEdges = 0;
+    for( i = 0; i < EdgeNormal.size(); i++ ) {
+        temp = (int) ((EdgeNormal[i] * NumberEdges / (i+1) ) + 0.5);
+        result.push_back( temp );
+        ActualEdges += temp * (i+1);
+    }  
+
+    //printf("Edges %d(%d)\n", NumberEdges, ActualEdges);
+    //PrintVector( result );
+
+    //Adjust to account for rounding
+    //Start at the top, remove one from a bin and then
+    //add one either to the next higher or next lower bin
+    while( ActualEdges != NumberEdges ) {
+        if ( ActualEdges > NumberEdges ) {
+            for ( i = result.size(); i > 1; i-- ) {
+                if ( result[i] != 0 ) {
+                    result[i]--;
+                    result[i-1]++;
+                    ActualEdges--;
+                }
+            }
+        } else {
+             for ( i = result.size()-1; i > 0; i-- ) {
+                if ( result[i] != 0 ) {
+                    result[i]--;
+                    result[i+1]++;
+                    ActualEdges++;
+                }
+            }
+        }
+    }
+    //PrintVector( result );
+    return result;
+}
+
 void Ldpc::PrintEdgeList()
 {
     unsigned i;
@@ -216,5 +400,14 @@ void Ldpc::PrintEdgeList()
 
     for ( i = 0; i < (unsigned) numEdges; i++ ) 
         printf("%02d ", EdgeListByVariable[i]);
+    printf("\n");
+}
+
+void Ldpc::PrintVector( std::vector<int> vector ) {
+    unsigned i;
+    for ( i = 0; i < vector.size(); i++ ) {
+        printf("%d ", vector[i]);
+    }
+
     printf("\n");
 }

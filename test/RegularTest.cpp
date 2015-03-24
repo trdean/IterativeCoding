@@ -9,53 +9,65 @@ int main() {
 
     printf("(3,6) ensemble with 10 variables:\n");
     Ldpc *graph = new Ldpc( 10, 3, 6 );
-    graph->PrintEdgeList();
+    //graph->PrintEdgeList();
     MyTest->TestCode( graph,
-                        0.0,
-                        1.0,
-                        0.05,
+                        0.85,
+                        0.90,
+                        0.01,
                         10,
-                        10000,
+                        1000,
                         stdout );
     //delete graph;
 
-    printf("\n(3,6) ensemble with 9 variables:\n");
-    Ldpc *graph2 = new Ldpc( 9, 3, 6 );
-    graph2->PrintEdgeList();
+    printf("\n(3,6) ensemble with 100 variables:\n");
+    Ldpc *graph2 = new Ldpc( 100, 3, 6 );
+    //graph2->PrintEdgeList();
     MyTest->TestCode( graph2,
-                        0.0,
-                        1.0,
-                        0.05,
+                        0.85,
+                        0.90,
+                        0.01,
                         10,
-                        10000,
+                        1000,
                         stdout );
     //delete graph2;
 
-    printf("\n(3,8) ensemble with 21 variables:\n");
-    Ldpc *graph3 = new Ldpc( 21, 3, 8 );
-    graph3->PrintEdgeList();
+    printf("\n(3,6) ensemble with 1000 variables:\n");
+    Ldpc *graph3 = new Ldpc( 1000, 3, 6 );
+    //graph3->PrintEdgeList();
     MyTest->TestCode( graph3,
-                        0.0,
-                        1.0,
-                        0.05,
+                        0.85,
+                        0.90,
+                        0.01,
                         10,
-                        10000,
+                        1000,
                         stdout );
     //delete graph;
 
-    printf("\n(12, 10) ensemble with 5000 variables:\n");
-    Ldpc *graph4 = new Ldpc( 5000, 12, 10 );
+    printf("\n(3, 6) ensemble with 10000 variables:\n");
+    Ldpc *graph4 = new Ldpc( 10000, 3, 6 );
     MyTest->TestCode( graph4,
-                        0.0,
-                        1.0,
-                        0.05,
+                        0.85,
+                        0.90,
+                        0.01,
                         5,
-                        200,
+                        100,
                         stdout );
+
+    printf("\n(3, 6) ensemble with 100000 variables:\n");
+    Ldpc *graph5 = new Ldpc( 100000, 3, 6 );
+    MyTest->TestCode( graph5,
+                        0.85,
+                        0.90,
+                        0.01,
+                        5,
+                        100,
+                        stdout );
+
 
     delete graph;
     delete graph2;
     delete graph3;
     delete graph4;
+    delete graph5;
     delete MyTest;
 }

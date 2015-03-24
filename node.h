@@ -26,11 +26,11 @@ class Node
         void PopReference();                ///< Removes the last reference 
         void InsertReference( Node *ref, int index );  ///< Inserts a pointer to ref at position index
         void RemoveReference( int index );     ///< Removes reference at index
-        bool IsReference( int otherIndex );    ///< Checks if node with index is a reference 
+        bool IsReference( Node *other );    ///< Checks if node with index is a reference 
 
         double GetMessage( Node *ref ) const;  ///< Gets the message for node *ref
         int GetDegree() const;                 ///< Returns the number of references
-        int GetIndex() const;                  ///< Returns the index of the node
+        //int GetIndex() const;                  ///< Returns the index of the node
         Node *GetReference( int index );       ///< Returns reference to reference at index
 
         double value;

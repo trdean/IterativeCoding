@@ -105,9 +105,11 @@ Graph::Graph( Graph *other, std::vector<VariableNode *> *variableNodes ) :
 
 Graph::~Graph() 
 {
+    printf("Graph Dtor\n");
     unsigned i;
-
+    
     if (AllocatedNodes) {
+        printf("Del nodes\n");
         for ( i = 0; i < numVariables; i++ ) 
             delete variables[i];
         variables.clear();
@@ -116,6 +118,9 @@ Graph::~Graph()
     for ( i = 0; i < numChecks; i++ )
        delete checks[i]; 
     checks.clear();
+
+    numVariables = 0;
+    numChecks = 0;
 }
 
 Graph::Graph( const Graph& other )
@@ -174,7 +179,7 @@ Graph& Graph::operator=( const Graph& rhs )
 
 bool Graph::CheckConnection( int checkIndex, int variableIndex ) const
 {
-    return variables[variableIndex]->IsReference( checks[checkIndex]->GetIndex() );
+    return variables[variableIndex]->IsReference( checks[checkIndex] );
 }
 
 void Graph::SetVariablesFromReal( double *values )
@@ -295,15 +300,19 @@ void Graph::ViewGraph()
     printf("Graph connections\n\n");
 
     for ( i = 0; i < numVariables; i++ ) {
-        printf("Variable Node %d:\n", variables[i]->GetIndex() );
+        printf("Variable Node %p (degree %d):\n", 
+               variables[i], 
+               variables[i]->GetDegree() );
         for ( j = 0; j < variables[i]->GetDegree(); j++ ) 
-            printf("    Check Node %d\n", variables[i]->GetReference( j )->GetIndex() );
+            printf("    Check Node %p (degree %d)\n", 
+                   variables[i]->GetReference( j ),
+                   variables[i]->GetReference( j )->GetDegree() );
     }
 
     for ( i = 0; i < numChecks; i++ ) {
-        printf("Check Node %d:\n", checks[i]->GetIndex() );
+        printf("Check Node %p:\n", checks[i] );
         for ( j = 0; j < checks[i]->GetDegree(); j++ )
-            printf("    Variable Node %d\n", checks[i]->GetReference( j )->GetIndex() );
+            printf("    Variable Node %p\n", checks[i]->GetReference( j ) );
     }
  
 }

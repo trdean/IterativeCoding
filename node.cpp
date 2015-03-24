@@ -10,7 +10,9 @@ int CheckNode::checkCount = 0;
 Node::Node() :
     value ( 0 )
 {
-
+    degree = 0;
+    references.clear();
+    messages.clear();
 }
 
 Node::~Node() 
@@ -42,7 +44,7 @@ Node& Node::operator=( const Node& rhs )
 void Node::PushReference( Node *ref )
 {
     //If ref is already in refernces then just ignore it
-    if ( IsReference( ref->GetIndex() ) )
+    if ( IsReference( ref ) )
         return;
 
     references.push_back( ref );
@@ -59,7 +61,7 @@ void Node::PopReference()
 
 void Node::InsertReference( Node *ref, int index )
 {
-    if ( IsReference( ref->GetIndex() ) )
+    if ( IsReference( ref ) )
         return;
 
     references.insert( references.begin() + index, ref );
@@ -74,12 +76,12 @@ void Node::RemoveReference( int index )
     degree--;
 }
 
-bool Node::IsReference( int otherIndex )
+bool Node::IsReference( Node *other )
 {
     unsigned i;
   
     for ( i = 0; i < references.size(); i++ )
-        if ( references[i]->GetIndex() == otherIndex )
+        if ( references[i] == other )
             return true;
 
     return false;
@@ -103,10 +105,12 @@ int Node::GetDegree() const
     return degree;
 }
 
+/*
 int Node::GetIndex() const
 {
     return index;
 }
+*/
 
 Node *Node::GetReference( int index )
 {
